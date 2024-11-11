@@ -23,7 +23,7 @@ func SimulateVehicles(parkingLot *models.ParkingLot, door *models.Door, vehicleS
 		go func(id int) {
 			defer wg.Done()
 			defer func() { <-activeVehicles }()
-
+			// crear carro
 			vehicle := &models.Vehicle{
 				ID:       id,
 				State:    "waiting",
@@ -38,7 +38,7 @@ func SimulateVehicles(parkingLot *models.ParkingLot, door *models.Door, vehicleS
 
 			fmt.Printf("Vehicle %d created and waiting to enter.\n", id)
 
-			// Solicitar entrada y esperar confirmación
+			// Solicitar entrada y esperar confirmacion
 			allowEnter := door.Request(id, "entering")
 			<-allowEnter // Espera la señal de permiso para entrar
 			slot := parkingLot.Enter(id)
@@ -47,8 +47,8 @@ func SimulateVehicles(parkingLot *models.ParkingLot, door *models.Door, vehicleS
 
 			// Mueve el vehículo hacia el slot
 			for vehicle.State == "entering" {
-				vehicle.Update(0.1) // Actualizar posición con un delta de tiempo
-				time.Sleep(100 * time.Millisecond) // Pequeño retardo para simular el movimiento
+				vehicle.Update(0.1) // Actualizar posicion
+				time.Sleep(100 * time.Millisecond) // simular movimiento
 			}
 
 			// Simulación de estacionamiento
@@ -60,16 +60,16 @@ func SimulateVehicles(parkingLot *models.ParkingLot, door *models.Door, vehicleS
 				if vehicle.ShouldExit() {
 					fmt.Printf("Vehicle %d ready to exit from slot %d.\n", id, slot)
 
-					// Solicitar salida y esperar confirmación
+					// Solicitar salida y esperar confirmacion
 					allowExit := door.Request(id, "exiting")
 					select {
 					case <-allowExit: // Espera la señal de permiso para salir
 						vehicle.State = "exiting"
 						vehicle.Target = pixel.V(400, 525)
 
-						// Mueve el vehículo hacia la salida
+						// Mueve hacia la salida
 						for vehicle.State == "exiting" {
-							vehicle.Update(0.1) // Actualizar posición
+							vehicle.Update(0.1) // Actualizar posicion
 							time.Sleep(100 * time.Millisecond)
 						}
 
@@ -91,7 +91,7 @@ func SimulateVehicles(parkingLot *models.ParkingLot, door *models.Door, vehicleS
 			}
 		}(i)
 
-		// Introduce un retardo entre la generación de vehículos
+		// Introduce un retardo entre la generación
 		time.Sleep(time.Duration(rand.Intn(1000)) * time.Millisecond)
 	}
 }

@@ -31,7 +31,7 @@ func (d *Door) Manage() {
 	for req := range d.queue {
 		d.mu.Lock()
 
-		// Esperar hasta que la puerta esté libre o en la dirección correcta
+		// Esperar hasta que la puerta este libre o en la dirección correcta
 		for d.count > 0 && d.direction != req.direction {
 			d.cond.Wait()
 		}
@@ -42,7 +42,7 @@ func (d *Door) Manage() {
 		req.allowPass <- true // Enviar señal de permiso para que el vehículo pase
 		close(req.allowPass)  // Cerrar el canal para indicar que se dio la señal
 
-		fmt.Printf("Vehicle %d is %s through the door. Count: %d\n", req.vehicleID, req.direction, d.count)
+		fmt.Printf("Vehicle %d is %s through the door.\n", req.vehicleID, req.direction, )
 		d.mu.Unlock()
 
 		// Simulate vehicle passing through the door
@@ -62,7 +62,7 @@ func (d *Door) CompleteRequest(vehicleID int) {
 	defer d.mu.Unlock()
 
 	d.count--
-	fmt.Printf("Vehicle %d has completed %s through the door. Remaining count: %d\n", vehicleID, d.direction, d.count)
+	fmt.Printf("Vehicle %d has completed %s through the door.\n", vehicleID, d.direction,)
 
 	// Cambia la dirección solo cuando no hay más vehículos en la dirección actual
 	if d.count == 0 {
